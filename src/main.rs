@@ -1,16 +1,21 @@
-use rayon::prelude::*;
 fn main() {
     println!("Let's gooooo");
 
-    let p: Vec<(u64, u64)> = (1..600000000u64)
-        .into_par_iter()
-        .map(|x| calc_loop(x))
-        .collect();
-
-    println!("{:#?}", &p.len());
+    calc_loop();
 }
 
-fn calc_loop(start_number: u64) -> (u64, u64) {
+fn calc_loop() {
+    let mut biggest: (u64, u64) = (0, 0);
+    for i in 1..10000000u64 {
+        let res = iter_loop(i);
+        if res > biggest.1 {
+            println!("{}:{}", i, res);
+            biggest = (i, res);
+        }
+    }
+}
+
+fn iter_loop(start_number: u64) -> u64 {
     let mut i = start_number;
     let mut iterations = 0u64;
 
@@ -23,7 +28,7 @@ fn calc_loop(start_number: u64) -> (u64, u64) {
         }
 
         if i == 1 {
-            return (start_number, iterations);
+            return iterations;
         }
     }
 }
