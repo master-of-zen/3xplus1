@@ -6,7 +6,7 @@ fn main() {
 
 fn calc_loop() {
     let mut biggest: (u64, u64) = (0, 0);
-    for i in 1..10000000u64 {
+    for i in 1..u64::MAX {
         let res = iter_loop(i);
         if res > biggest.1 {
             println!("{}:{}", i, res);
@@ -16,7 +16,7 @@ fn calc_loop() {
 }
 
 fn iter_loop(start_number: u64) -> u64 {
-    let mut i = start_number;
+    let mut i = start_number as u128;
     let mut iterations = 0u64;
 
     loop {
