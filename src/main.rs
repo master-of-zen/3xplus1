@@ -1,23 +1,30 @@
+use rayon::prelude::*;
+use std::convert::TryInto;
 fn main() {
     println!("Let's gooooo");
 
-    calc_loop();
+    par_calculation();
 }
 
-fn calc_loop() {
-    let mut biggest: (u64, u64) = (0, 0);
-    for i in 1..u64::MAX {
-        let res = iter_loop(i);
-        if res > biggest.1 {
-            println!("{}:{}", i, res);
-            biggest = (i, res);
+fn par_calculation() {
+    let mut biggest: (u128, u128) = (0, 0);
+
+    for i in (1..u64::MAX).step_by(1000) {
+        let arr: [u128; 1000] = (i as u128..(i as u128 + 1000u128))
+            .collect::<Vec<u128>>()
+            .try_into()
+            .expect("wrong size iterator");
+        let res = process_nums(&arr);
+        if res.1 > biggest.1 {
+            println!("{}:{}", res.0, res.1);
+            biggest = res;
         }
     }
 }
 
-fn iter_loop(start_number: u64) -> u64 {
-    let mut i = start_number as u128;
-    let mut iterations = 0u64;
+fn process_u128(start_number: u128) -> u128 {
+    let mut i = start_number;
+    let mut iterations = 0u128;
 
     loop {
         iterations += 1;
@@ -31,4 +38,16 @@ fn iter_loop(start_number: u64) -> u64 {
             return iterations;
         }
     }
+}
+
+fn process_nums(input: &[u128]) -> (u128, u128) {
+    let mut comb: Vec<(u128, u128)> = input
+        .clone()
+        .par_iter()
+        .map(|&i| (i, process_u128(i)))
+        .collect();
+
+    comb.sort_by(|x, y| x.1.cmp(&y.1));
+
+    comb[0]
 }
