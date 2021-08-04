@@ -1,7 +1,6 @@
 use rayon::prelude::*;
 use std::time::Instant;
 fn main() {
-    println!("Let's gooooo");
     let now = Instant::now();
     functional();
     println!("Done: {}", now.elapsed().as_millis());
@@ -9,7 +8,22 @@ fn main() {
 
 fn functional() {
     let mut biggest: (u32, u32) = (0, 0);
-    for i in (1..1000000000u32).step_by(1000000) {
+    for i in (1..1000000u32).step_by(10000) {
+        let vc: Vec<(u32, u32)> = (i as u32..(i as u32 + 10000u32))
+            .into_par_iter()
+            .map(|x| (x, process_u32(x)))
+            .filter(|x| x.1 > biggest.1)
+            .collect::<Vec<(u32, u32)>>();
+
+        for i in vc.iter() {
+            if i.1 > biggest.1 {
+                println!("{}:{}", i.0, i.1);
+                biggest = (i.0, i.1);
+            }
+        }
+    }
+
+    for i in (1000000..1000000000u32).step_by(1000000) {
         let vc: Vec<(u32, u32)> = (i as u32..(i as u32 + 1000000u32))
             .into_par_iter()
             .map(|x| (x, process_u32(x)))
